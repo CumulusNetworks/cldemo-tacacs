@@ -1,0 +1,5 @@
+- name: install tacacs client
+  apt: name=tacplus-client state=installed update_cache=yes
+
+- name: apply tacacs configuration
+  copy: src=tacplus_servers dest=/etc/tacplus_servers

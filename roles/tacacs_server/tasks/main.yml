@@ -1,0 +1,7 @@
+- name: install tacacs+ service
+  apt: name=tacacs+ state=installed update_cache=yes
+
+- name: apply configuration
+  copy: src=tac_plus.conf
+  notify:
+    - restart tacacs
