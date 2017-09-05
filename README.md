@@ -11,7 +11,7 @@ It has two roles:
 There is a client called **testuser** with password **cn321**. Test that tacacs is working by trying to log in with the user:
 `ssh testuser@leaf01`
 
-#Steps to run demo
+# Steps to run demo
 ```
 git clone https://github.com/CumulusNetworks/cldemo-vagrant.git
 cd cldemo-vagrant
