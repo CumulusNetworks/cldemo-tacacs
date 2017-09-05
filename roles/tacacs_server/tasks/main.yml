@@ -2,6 +2,6 @@
   apt: name=tacacs+ state=installed update_cache=yes
 
 - name: apply configuration
-  copy: src=tac_plus.conf
+  copy: src=tac_plus.conf dest=/etc/tacacs+/tac_plus.conf
   notify:
     - restart tacacs
