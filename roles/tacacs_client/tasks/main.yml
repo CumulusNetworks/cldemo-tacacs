@@ -1,5 +1,9 @@
 - name: install tacacs client
   apt: name=tacplus-client state=installed update_cache=yes
 
-- name: apply tacacs configuration
+- name: Configure Authorization
   copy: src=tacplus_servers dest=/etc/tacplus_servers
+
+- name: Configure Accounting
+  copy: src=tacplus_accounting dest=/etc/audisp/audisp-tac_plus.conf
+  notify: restart auditd
