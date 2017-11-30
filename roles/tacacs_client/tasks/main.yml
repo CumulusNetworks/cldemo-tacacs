@@ -7,3 +7,8 @@
 - name: Configure Accounting
   copy: src=tacplus_accounting dest=/etc/audisp/audisp-tac_plus.conf
   notify: restart auditd
+
+- name: Setup NCLU
+  copy: src=netd.conf dest=/etc/netd.conf
+  notify: restart nclu
+
