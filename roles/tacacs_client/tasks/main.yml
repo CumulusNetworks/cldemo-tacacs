@@ -28,6 +28,12 @@
     mode: u=rwX,g=rX,o=rX
     recurse: yes
 
+- name: Fix Permissions on /var/log/audit so it will be able to start
+  file:
+    path: /var/log/audit
+    mode: 0640
+    recurse: yes
+
 - name: Change Logrotate Permissions on FRR and Nginx so All Users can see logs that have rolled
   lineinfile:
     path: "/etc/logrotate.d/{{item}}"
