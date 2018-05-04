@@ -8,8 +8,8 @@ It has two roles:
 2. Deploy TACACS client package onto all switches in infrastructure
 * Configure TACACS client to use TACACS server for authentication
 
-There is a client called **testuser** with password **cn321**. Test that tacacs is working by trying to log in with the user:
-`ssh testuser@leaf01`
+There is a client called **adminuser** with password **password**. Test that tacacs is working by trying to log in with the user:
+`ssh adminuser@leaf01`
 
 # Steps to run demo
 ```
@@ -27,8 +27,8 @@ ansible-playbook run-demo.yml
 ```
 
 ```
-cumulus@oob-mgmt-server:~/cldemo-tacacs$ ssh testuser@leaf01
-testuser@leaf01's password: cn321
+cumulus@oob-mgmt-server:~/cldemo-tacacs$ ssh adminuser@leaf01
+adminuser@leaf01's password: password
 
 Welcome to Cumulus VX (TM)
 
@@ -40,30 +40,36 @@ http://community.cumulusnetworks.com
 The registered trademark Linux (R) is used pursuant to a sublicense from LMI,
 the exclusive licensee of Linus Torvalds, owner of the mark on a world-wide
 basis.
-testuser@leaf01:~$
+adminuser@leaf01:~$
 ```
+Verify your privilege level: 
+```
+adminuser@leaf01:~$ pwd
+/home/tacacs15
+```
+
 
 Look at logs:
 ```
-testuser@leaf01:~$ sudo tail -f /var/log/syslog
-2017-09-05T22:29:38.173712+00:00 leaf01 sshd[3029]: Accepted password for testuser from 192.168.0.254 port 40259 ssh2
-2017-09-05T22:29:38.208347+00:00 leaf01 sshd[3029]: pam_unix(sshd:session): session opened for user testuser by (uid=0)
+adminuser@leaf01:~$ sudo tail -f /var/log/syslog
+2017-09-05T22:29:38.173712+00:00 leaf01 sshd[3029]: Accepted password for adminuser from 192.168.0.254 port 40259 ssh2
+2017-09-05T22:29:38.208347+00:00 leaf01 sshd[3029]: pam_unix(sshd:session): session opened for user adminuser by (uid=0)
 ```
 
 ```
-testuser@leaf01:~$ groups
+adminuser@leaf01:~$ groups
 tacacs
 ```
 
 ```
-testuser@leaf01:~$ sudo getent passwd testuser
-testuser:x:1017:1002:TACACS+ mapped user at privilege level 15,,,:/home/tacacs15:/bin/bash
+adminuser@leaf01:~$ sudo getent passwd adminuser
+adminuser:x:1017:1002:TACACS+ mapped user at privilege level 15,,,:/home/tacacs15:/bin/bash
 ```
 
 #### See Tacacs Events in the log file.
 ```
 cumulus@oob-mgmt-server:~$ sudo tail -f /var/log/tac_plus.acct 
-Nov 30 01:27:54	192.168.0.11	testuser	pts0	oob-mgmt-server	stop		start_time=1512005274	task_id=10780	service=shell	cmd=/bin/ls exit=0
+Nov 30 01:27:54	192.168.0.11	adminuser	pts0	oob-mgmt-server	stop		start_time=1512005274	task_id=10780	service=shell	cmd=/bin/ls exit=0
 
 ```
 
@@ -96,5 +102,23 @@ cumulus@oob-mgmt-server:~$ sudo grep tac_plus /var/log/syslog
 2017-11-29T19:30:01.766067+00:00 oob-mgmt-server tac_plus[27707]: connect from 192.168.0.12 [192.168.0.12]
 2017-11-29T19:30:01.769761+00:00 oob-mgmt-server tac_plus[27708]: connect from 192.168.0.12 [192.168.0.12]
 2017-11-29T19:30:01.881050+00:00 oob-mgmt-server tac_plus[27709]: connect from 192.168.0.21 [192.168.0.21]
+```
+
+## Try the Basicuser
+```
+cumulus@oob-mgmt-server:~/cldemo-tacacs$ ssh basicuser@leaf01
+basicuser@leaf01's password: password
+```
+
+### Notice the Limited Privileges
+
+Notice that you cannot make configuration changes, only use show commands:
+```
+net show interface
+
+net add bgp autonomous-system 65000
+
+cat /var/log/syslog
+
 ```
 
