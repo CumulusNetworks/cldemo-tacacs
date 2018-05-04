@@ -25,7 +25,8 @@ git clone https://github.com/CumulusNetworks/cldemo-tacacs.git
 cd cldemo-tacacs
 ansible-playbook run-demo.yml
 ```
-
+## Test the Adminuser
+The adminuser account has the ability to use SUDO and escalate their privileges to perform anything on the switch.
 ```
 cumulus@oob-mgmt-server:~/cldemo-tacacs$ ssh adminuser@leaf01
 adminuser@leaf01's password: password
@@ -105,20 +106,54 @@ cumulus@oob-mgmt-server:~$ sudo grep tac_plus /var/log/syslog
 ```
 
 ## Try the Basicuser
+The basicuser is a limited privilege account designed to provide troubleshooting abilities to NOC users. This account cannot make configuration chages or use sudo aside from for commands related to troubleshooting activities such as performing a packetcapture with TCPdump or collecting a cl-support file or looking at lldpctl output.
 ```
 cumulus@oob-mgmt-server:~/cldemo-tacacs$ ssh basicuser@leaf01
-basicuser@leaf01's password: password
+basicuser@leaf02's password: password
 ```
 
 ### Notice the Limited Privileges
 
 Notice that you cannot make configuration changes, only use show commands:
 ```
-net show interface
+basicuser@leaf02:~$ net show interface
+State  Name           Spd  MTU    Mode          LLDP                    Summary
+-----  -------------  ---  -----  ------------  ----------------------  -------------------------
+UP     lo             N/A  65536  Loopback                              IP: 127.0.0.1/8
+       lo                                                               IP: 10.255.255.2/32
+       lo                                                               IP: ::1/128
+UP     eth0           1G   1500   Mgmt          oob-mgmt-switch (swp7)  IP: 192.168.0.12/24(DHCP)
+UP     swp1           1G   1500   BondMember    server01 (eth2)         Master: SERVER01(UP)
+UP     swp2           1G   1500   BondMember    server02 (eth2)         Master: SERVER02(UP)
+UP     swp49          1G   1500   BondMember    leaf01 (swp49)          Master: peerlink(UP)
+UP     swp50          1G   1500   BondMember    leaf01 (swp50)          Master: peerlink(UP)
+UP     SERVER01       1G   1500   LACP                                  Master: bridge(UP)
+       SERVER01                                                         Bond Members: swp1(UP)
+UP     SERVER02       1G   1500   LACP                                  Master: bridge(UP)
+       SERVER02                                                         Bond Members: swp2(UP)
+UP     bridge         N/A  1500   Bridge/L2
+UP     peerlink       2G   1500   LACP                                  Master: bridge(UP)
+       peerlink                                                         Bond Members: swp49(UP)
+       peerlink                                                         Bond Members: swp50(UP)
+UP     peerlink.4094  2G   1500   SubInt/L3                             IP: 169.254.1.2/30
+UP     vlan10         N/A  1500   Interface/L3                          IP: 10.0.10.3/24
+UP     vlan10-v0      N/A  1500   Interface/L3                          IP: 10.0.10.1/24
+UP     vlan20         N/A  1500   Interface/L3                          IP: 10.0.20.3/24
+UP     vlan20-v0      N/A  1500   Interface/L3                          IP: 10.0.20.1/24
 
-net add bgp autonomous-system 65000
-
-cat /var/log/syslog
+basicuser@leaf02:~$ net add bgp autonomous-system 65000
+ERROR: You do not have permission to execute that command.
+basicuser@leaf02:~$ tail /var/log/syslog
+2018-05-04T18:00:51.990777+00:00 leaf02 phc2sys: [271230.677] Waiting for ptp4l...
+2018-05-04T18:00:51.991442+00:00 leaf02 phc2sys: [271230.677] uds: sendto failed: No such file or directory
+2018-05-04T18:00:52.992084+00:00 leaf02 phc2sys: [271231.678] Waiting for ptp4l...
+2018-05-04T18:00:52.992547+00:00 leaf02 phc2sys: [271231.678] uds: sendto failed: No such file or directory
+2018-05-04T18:00:53.993434+00:00 leaf02 phc2sys: [271232.680] Waiting for ptp4l...
+2018-05-04T18:00:53.993839+00:00 leaf02 phc2sys: [271232.680] uds: sendto failed: No such file or directory
+2018-05-04T18:00:54.994669+00:00 leaf02 phc2sys: [271233.681] Waiting for ptp4l...
+2018-05-04T18:00:54.995078+00:00 leaf02 phc2sys: [271233.681] uds: sendto failed: No such file or directory
+2018-05-04T18:00:55.995926+00:00 leaf02 phc2sys: [271234.682] Waiting for ptp4l...
+2018-05-04T18:00:55.996381+00:00 leaf02 phc2sys: [271234.682] uds: sendto failed: No such file or directory
 
 ```
 
