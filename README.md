@@ -157,7 +157,7 @@ basicuser@leaf02:~$ tail /var/log/syslog
 
 ```
 ## Try  the timeuser
-The Timeuser in this case has very limited access to the system, and can only access the system to get current time information and ntp server information. 
+The Timeuser in this case has very limited access to the system, and can only access the system to get current time information and ntp server information. This is example of Cumulus TACACS+ Per-command Authorization feature.
 ```
 cumulus@oob-mgmt-server:~$ ssh timeuser@leaf02
 timeuser@leaf02's password:
