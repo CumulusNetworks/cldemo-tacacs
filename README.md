@@ -156,4 +156,63 @@ basicuser@leaf02:~$ tail /var/log/syslog
 2018-05-04T18:00:55.996381+00:00 leaf02 phc2sys: [271234.682] uds: sendto failed: No such file or directory
 
 ```
+## Try  the timeuser
+The Timeuser in this case bas very limited access to the system, and can only access the system to get current time information and ntp server information. 
+```
+cumulus@oob-mgmt-server:~$ ssh timeuser@leaf02
+timeuser@leaf02's password:
+timeuser@leaf02:~$ pwd
+/home/tacacs1
+timeuser@leaf02:~$ 
+timeuser@leaf02:~$ 
+timeuser@leaf02:~$ 
+timeuser@leaf02:~$ net show time 
+Mon Oct 14 20:00:28 UTC 2019 
+timeuser@leaf02:~$ net show time json
+{"time": "Mon Oct 14 20:00:31 UTC 2019"} 
+timeuser@leaf02:~$ net show time ntp servers
+remote           refid      st t when poll reach   delay   offset  jitter
+==============================================================================
+*oob-mgmt-server 204.2.134.162    3 u  309 1024  377    3.135    2.727   4.105 
+```
+### No access to other net show commands 
+```
+timeuser@leaf02:~$ net show route 
+net not authorized by TACACS+ with given arguments, not executing
+timeuser@leaf02:~$ net show inter
+net not authorized by TACACS+ with given arguments, not executing
+timeuser@leaf02:~$ 
+timeuser@leaf02:~$ 
+
+```
+#### Tacacs Server logs for timeuser
+```
+Oct 14 20:00:28	192.168.0.12	timeuser	pts0	oob-mgmt-server	start		start_time=1571083228	task_id=17831	service=shell	cmd=/usr/bin/python2.7 /usr/bin/net show time
+Oct 14 20:00:28	192.168.0.12	timeuser	pts0	oob-mgmt-server	start		start_time=1571083228	task_id=17831	service=shell	cmd=/usr/bin/python2.7 /usr/bin/net show time
+Oct 14 20:00:28	192.168.0.12	timeuser	pts0	oob-mgmt-server	stop		start_time=1571083228	task_id=17831	service=shell	cmd=/usr/bin/python2.7 exit=0
+Oct 14 20:00:28	192.168.0.12	timeuser	pts0	oob-mgmt-server	stop		start_time=1571083228	task_id=17831	service=shell	cmd=/usr/bin/python2.7 exit=0
+Oct 14 20:00:30	192.168.0.12	timeuser	pts0	oob-mgmt-server	start		start_time=1571083230	task_id=17833	service=shell	cmd=/usr/sbin/tacplus-auth show time json
+Oct 14 20:00:30	192.168.0.12	timeuser	pts0	oob-mgmt-server	start		start_time=1571083230	task_id=17833	service=shell	cmd=/usr/sbin/tacplus-auth show time json
+Oct 14 20:00:30	192.168.0.12	timeuser	pts0	oob-mgmt-server	start		start_time=1571083230	task_id=17833	service=shell	cmd=/usr/bin/python2.7 /usr/bin/net show time json
+Oct 14 20:00:30	192.168.0.12	timeuser	pts0	oob-mgmt-server	start		start_time=1571083230	task_id=17833	service=shell	cmd=/usr/bin/python2.7 /usr/bin/net show time json
+Oct 14 20:00:31	192.168.0.12	timeuser	pts0	oob-mgmt-server	stop		start_time=1571083231	task_id=17833	service=shell	cmd=/usr/bin/python2.7 exit=0
+Oct 14 20:00:31	192.168.0.12	timeuser	pts0	oob-mgmt-server	stop		start_time=1571083231	task_id=17833	service=shell	cmd=/usr/bin/python2.7 exit=0
+Oct 14 20:00:35	192.168.0.12	timeuser	pts0	oob-mgmt-server	start		start_time=1571083235	task_id=17835	service=shell	cmd=/usr/sbin/tacplus-auth show time ntp servers
+Oct 14 20:00:35	192.168.0.12	timeuser	pts0	oob-mgmt-server	start		start_time=1571083235	task_id=17835	service=shell	cmd=/usr/sbin/tacplus-auth show time ntp servers
+Oct 14 20:00:35	192.168.0.12	timeuser	pts0	oob-mgmt-server	start		start_time=1571083235	task_id=17835	service=shell	cmd=/usr/bin/python2.7 /usr/bin/net show time ntp servers
+Oct 14 20:00:35	192.168.0.12	timeuser	pts0	oob-mgmt-server	start		start_time=1571083235	task_id=17835	service=shell	cmd=/usr/bin/python2.7 /usr/bin/net show time ntp servers
+Oct 14 20:00:35	192.168.0.12	timeuser	pts0	oob-mgmt-server	stop		start_time=1571083235	task_id=17835	service=shell	cmd=/usr/bin/python2.7 exit=0
+Oct 14 20:00:35	192.168.0.12	timeuser	pts0	oob-mgmt-server	stop		start_time=1571083235	task_id=17835	service=shell	cmd=/usr/bin/python2.7 exit=0
+Oct 14 20:00:39	192.168.0.12	timeuser	pts0	oob-mgmt-server	start		start_time=1571083239	task_id=17848	service=shell	cmd=/usr/sbin/tacplus-auth show route
+Oct 14 20:00:39	192.168.0.12	timeuser	pts0	oob-mgmt-server	start		start_time=1571083239	task_id=17848	service=shell	cmd=/usr/sbin/tacplus-auth show route
+Oct 14 20:00:39	192.168.0.12	timeuser	pts0	oob-mgmt-server	stop		start_time=1571083239	task_id=17848	service=shell	cmd=/usr/sbin/tacplus-auth exit=1
+Oct 14 20:00:39	192.168.0.12	timeuser	pts0	oob-mgmt-server	stop		start_time=1571083239	task_id=17848	service=shell	cmd=/usr/sbin/tacplus-auth exit=1
+Oct 14 20:04:51	192.168.0.12	timeuser	pts0	oob-mgmt-server	start		start_time=1571083491	task_id=18371	service=shell	cmd=/usr/sbin/tacplus-auth show inter
+Oct 14 20:04:51	192.168.0.12	timeuser	pts0	oob-mgmt-server	start		start_time=1571083491	task_id=18371	service=shell	cmd=/usr/sbin/tacplus-auth show inter
+Oct 14 20:04:51	192.168.0.12	timeuser	pts0	oob-mgmt-server	stop		start_time=1571083491	task_id=18371	service=shell	cmd=/usr/sbin/tacplus-auth exit=1
+Oct 14 20:04:51	192.168.0.12	timeuser	pts0	oob-mgmt-server	stop		start_time=1571083491	task_id=18371	service=shell	cmd=/usr/sbin/tacplus-auth exit=1
+root@oob-mgmt-server:~/cldemo-tacacs# 
+
+```
+
 
