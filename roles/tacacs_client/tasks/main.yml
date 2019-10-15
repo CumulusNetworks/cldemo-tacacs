@@ -1,21 +1,21 @@
 - name: install tacacs client
   apt: name=tacplus-client state=installed update_cache=yes
 
-- name: Configure Authorization
+- name: Configure Authentication
   copy: src=tacplus_servers dest=/etc/tacplus_servers
 
 - name: Configure Accounting
   copy: src=tacplus_accounting dest=/etc/audisp/audisp-tac_plus.conf
   notify: restart auditd
 
-- name: Setup NCLU to allow show for TACACS users
+- name: Setup NCLU to allow show commands for TACACS users
   lineinfile:
     path: /etc/netd.conf
     regexp: '^groups_with_show'
     line: 'groups_with_show = netshow, tacacs'
   notify: restart nclu
 
-- name: Change Syslog Permissions so All Users can see Syslog
+- name: Change Syslog Permissions so all users can see Syslog
   lineinfile:
     path: /etc/rsyslog.conf
     regexp: '^FileCreateMode'
@@ -42,15 +42,14 @@
   with_items:
   - "nginx"
   - "frr"
-- name: enable restricted shell access to  tacacs1 user, additional limits on server side config
-  command: tacplus-restrict -i -f -u tacacs1 -a net
-  become: yes
-  become_user: root
 
-- name: Create customizations for TACACS Priv 1 users to run Certain Diagnostic Commands
+- name: Configure Authorization via restricted shell additional limits on server side config
+  command: tacplus-restrict -i -f -u tacacs1 -a net
+
+- name: Create customizations for TACACS Priv 2 users to run Certain Diagnostic Commands
   copy: 
     content: | 
-      # Custom Modifications to support the needs of a TACACS privilege level 1 user.
+      # Custom Modifications to support the needs of a TACACS privilege level 2 user.
 
       # Common Programs
       tacacs2         ALL=(ALL:ALL) NOPASSWD: /usr/cumulus/bin/cl-support
