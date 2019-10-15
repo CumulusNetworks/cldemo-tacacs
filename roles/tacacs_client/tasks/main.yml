@@ -42,6 +42,10 @@
   with_items:
   - "nginx"
   - "frr"
+- name: enable restricted shell access to  tacacs1 user, additional limits on server side config
+  command: tacplus-restrict -i -f -u tacacs1 -a net
+  become: yes
+  become_user: root
 
 - name: Create customizations for TACACS Priv 1 users to run Certain Diagnostic Commands
   copy: 
@@ -49,10 +53,8 @@
       # Custom Modifications to support the needs of a TACACS privilege level 1 user.
 
       # Common Programs
-      tacacs1         ALL=(ALL:ALL) NOPASSWD: /usr/cumulus/bin/cl-support
-      tacacs1         ALL=(ALL:ALL) NOPASSWD:NOEXEC: /usr/sbin/tcpdump
-      tacacs1         ALL=(ALL:ALL) NOPASSWD:NOEXEC: /usr/sbin/lldpctl
+      tacacs2         ALL=(ALL:ALL) NOPASSWD: /usr/cumulus/bin/cl-support
+      tacacs2         ALL=(ALL:ALL) NOPASSWD:NOEXEC: /usr/sbin/tcpdump
+      tacacs2         ALL=(ALL:ALL) NOPASSWD:NOEXEC: /usr/sbin/lldpctl
     dest: /etc/sudoers.d/tacplus_privilege1
     validate: /usr/sbin/visudo -cf %s
-
-
